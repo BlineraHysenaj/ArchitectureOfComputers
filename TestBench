@@ -1,0 +1,436 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05/09/2020 04:51:56 PM
+// Design Name: 
+// Module Name: DataMemory_tb
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module DataMemory_tb(
+    );
+reg clk;
+reg MemWrite, MemRead;
+reg[15:0] WriteData;
+reg[15:0] AdresaNeHyrje;
+wire[15:0] ReadData;
+reg[15:0] DataMemory[127:0];
+
+initial $monitor("ReadData=%d, AdresanNeHyrje=%d", ReadData, AdresaNeHyrje);
+
+initial
+begin
+//lexojme vleren nga memoria ne adresen 12
+#0 clk = 1'b0;
+#5 AdresaNeHyrje=16'd12; MemRead=1'b1;
+#5 clk=1'b1;
+#5 clk = 1'b0;
+//shkruajme ne memorie ne adresen 15 vleren decimale 200
+#5 AdresaNeHyrje=16'd15; MemWrite=1'b1; WriteData=16'd200;
+#5 clk=1'b0;
+//lexojme vleren e shkruar
+#5 AdresaNeHyrje=16'd15; MemRead=1'b1;
+#5 clk=1'b1;
+#10 $stop;
+end 
+
+DataMemory dataMem(AdresaNeHyrje, WriteData, MemWrite, MemRead, clk, ReadData);
+endmodule
+
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05/08/2020 02:42:14 PM
+// Design Name: 
+// Module Name: Memory_tb
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module instrMemory_tb();
+reg clk;
+reg[15:0] Hyrja;
+wire[15:0] Dalja;
+reg[15:0] instrMemory[127:0];
+
+initial $monitor("Hyrja=%d, Dalja=%d", Hyrja, Dalja);
+
+initial
+begin
+#0 clk = 1'b1; Hyrja=16'd9; clk = 1'b0;
+#5 clk=1'b1;
+#10 Hyrja=16'd10; clk=1'b0;
+#10 $stop;
+end 
+
+InstrMemory instrMem(clk, Hyrja, Dalja);
+endmodule
+
+module mult_tb;
+
+reg [15:0] a, b;
+reg start;
+wire [32:0] prod;
+
+initial
+$monitor ("a = %b, b = %b, prod = %b", a, b, prod);
+
+initial
+begin
+#0  start = 1'b0; a = 16'b0110; b = 16'b0110;
+#10 start = 1'b1;
+#10 start = 1'b0;
+#10 a = 16'b0010; b = 16'b0110;
+#10 start = 1'b1;
+#10 start = 1'b0;
+#10 a = 16'b0111; b = 16'b0101;
+#10 start = 1'b1; 
+#10 start = 1'b0;
+#10 a = 16'b0111; b = 16'b0111;
+#10 start = 1'b1; 
+#10 start = 1'b0;
+#10 a = 16'b0101; b = 16'b0101;
+#10 start = 1'b1; 
+#10 start = 1'b0;
+#10 a = 16'b0111; b = 16'b0011;
+#10 start = 1'b1; 
+#10 start = 1'b0;
+#10 a = 16'b0100; b = 16'b0110;
+#10 start = 1'b1; 
+#10 start = 1'b0;
+#10 $stop;
+end
+mult inst1 (a, b, prod, start);
+endmodule
+
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 03/06/2020 08:59:35 PM
+// Design Name: 
+// Module Name: mux4to1_TESTIM
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module mux8to1_tb();
+
+reg [3:0] d;
+reg [1:0] s;
+reg enbl;
+wire z1;
+initial
+$monitor ($time,"ns, select:s=%b, inputs:d=%b, output:z1=%b",
+s, d, z1);
+initial
+begin
+#0 s[0]=1'b0; s[1]=1'b0;
+d[0]=1'b0; d[1]=1'b1; d[2]=1'b0; d[3]=1'b1;
+enbl=1'b1; //d[0]=0; z1=0
+#10 s[0]=1'b0; s[1]=1'b0;
+d[0]=1'b1; d[1]=1'b1; d[2]=1'b0; d[3]=1'b1;
+enbl=1'b1; //d[0]=1; z1=1
+#10 s[0]=1'b1; s[1]=1'b0;
+d[0]=1'b1; d[1]=1'b1; d[2]=1'b0; d[3]=1'b1;
+enbl=1'b1; //d[1]=1; z1=1
+#10 s[0]=1'b0; s[1]=1'b1;
+d[0]=1'b1; d[1]=1'b1; d[2]=1'b0; d[3]=1'b1;
+enbl=1'b1; //d[2]=0; z1=0
+#10 s[0]=1'b1; s[1]=1'b0;
+d[0]=1'b1; d[1]=1'b0; d[2]=1'b0; d[3]=1'b1;
+enbl=1'b1; //d[1]=1; z1=0
+#10 s[0]=1'b1; s[1]=1'b1;
+d[0]=1'b1; d[1]=1'b1; d[2]=1'b0; d[3]=1'b1;
+enbl=1'b1; //d[3]=1; z1=1
+#10 s[0]=1'b1; s[1]=1'b1;
+d[0]=1'b1; d[1]=1'b1; d[2]=1'b0; d[3]=1'b0;
+enbl=1'b1; //d[3]=0; z1=0
+#10 s[0]=1'b1; s[1]=1'b1;
+d[0]=1'b1; d[1]=1'b1; d[2]=1'b0; d[3]=1'b0;
+enbl=1'b0; //d[3]=0; z1=0
+#10 $stop;
+end
+//instantiate the module into the test bench
+mux_8to1 mux_8to1 (
+.d(d),
+.s(s),
+.z1(z1),
+.enbl(enbl));
+
+
+endmodule
+
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05/08/2020 02:06:00 PM
+// Design Name: 
+// Module Name: RegisterFile_tb
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module RegisterFile_tb();
+reg[2:0] RS;
+reg[2:0] RT;
+reg[2:0] RD;
+reg[15:0] WD;
+reg we;
+reg clk;
+wire[15:0] RD1;
+wire[15:0] RD2;    
+//wire[31:0] Registers[31:0];
+    
+initial $monitor("RS=%d, RT=%d, RD=%d", RS, RT, RD);
+
+initial
+begin
+//clock-u 0; vendosim vlerat per RD, te dhenat ne WD dhe WriteEnable=1; shkruajme ne regjistrin 5
+#10 clk=0; 
+    RD=3'd5; WD=16'd100; we=1'b1;
+//Te dhenat e mesiperme shkruhen ne tehun pozitiv te clockut
+#5  clk=1;    
+#5  clk=0;
+//clock-u 0; vendosim vlerat per RD, te dhenat ne WD dhe WriteEnable=1; shkruajme ne regjistrin 6
+#5  RD=3'd6; WD=16'd101; we=1'b1;
+//Te dhenat e mesiperme shkruhen ne tehun pozitiv te clockut
+#5  clk=1;    
+#5  clk=0;
+//Duke ofruar adresat per regjistrin e 5 dhe te 6 lexojme vlerat e tyre te deponuara me pare
+#10 RS=3'd5; RT=3'd6;
+#10 $stop;
+end 
+    
+RegisterFile RF (RS, RT, RD, WD,  we, clk, RD1, RD2);
+endmodule
+
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 04/24/2020 02:15:07 PM
+// Design Name: 
+// Module Name: alu_1bit_tb
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module alu_1bit_tb();
+
+reg a, b, cin,  bnegate;
+reg[2:0] op;
+wire result;
+wire cout;
+
+initial 
+$monitor ("a = %b, b = %b, cin = %b, cout = %b, op2 = %b, op1 = %b, op0 = %b, bnegate = %b",
+a, b, cin, cout, op[2], op[1], op[0],  bnegate);
+
+initial
+begin
+//AND
+#0 a=0; b=0; cin=0;  bnegate=0;  op[2]=0; op[1]=0; op[0]=0; 
+#10 a=1; b=0; cin=0; bnegate=0;  op[2]=0; op[1]=0; op[0]=0;
+#10 a=1; b=1; cin=0; bnegate=0;  op[2]=0; op[1]=0; op[0]=0;
+//OR
+#10 a=0; b=0; cin=0;  bnegate=0;  op[2]=0; op[1]=1; op[0]=0; 
+#10 a=1; b=0; cin=0; bnegate=0;  op[2]=0; op[1]=1; op[0]=0;
+#10 a=1; b=1; cin=0; bnegate=0;  op[2]=0; op[1]=1; op[0]=0;
+//ADD
+#0 a=0; b=0; cin=0;  bnegate=0;  op[2]=1; op[1]=0; op[0]=0;
+#10 a=1; b=0; cin=0; bnegate=0;  op[2]=1; op[1]=0; op[0]=0;
+#10 a=1; b=1; cin=0; bnegate=0;  op[2]=1; op[1]=0; op[0]=0;
+#10 a=0; b=1; cin=1; bnegate=0; op[2]=1;  op[1]=0; op[0]=0;
+//SUB
+#10 a=0; b=0; cin=1;  bnegate=1; op[2]=1; op[1]=0; op[0]=0;
+#10 a=0; b=1; cin=1;  bnegate=1; op[2]=1; op[1]=0; op[0]=0;
+#10 a=1; b=0; cin=1;  bnegate=1; op[2]=1; op[1]=0; op[0]=0;
+#10 a=1; b=1; cin=1;  bnegate=1; op[2]=1; op[1]=0; op[0]=0;
+//XOR
+#10 a=0; b=0; cin=0;  bnegate=0;  op[2]=0; op[1]=1; op[0]=1; 
+#10 a=1; b=0; cin=0; bnegate=0;  op[2]=0; op[1]=1; op[0]=1;
+#10 a=1; b=1; cin=0; bnegate=0;  op[2]=0; op[1]=1; op[0]=1;
+
+#10 $stop;
+end
+
+alu_1bit a1(a, b, cin, bnegate, op, result, cout);
+
+endmodule
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 04/24/2020 06:33:01 PM
+// Design Name: 
+// Module Name: alu_32bit_tb
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module alu_16bit_tb(); 
+   
+reg[15:0] a, b;
+reg cin, bnegate;
+reg[1:0] op;
+wire[15:0] result;
+wire cout;
+
+initial 
+$monitor ("a = %d, b = %d, cin = %b, cout = %b, op1 = %b, op0 = %b, bnegate = %b,result=%d",
+a, b, cin, cout, op[1], op[0], bnegate, result);
+
+initial
+begin
+//AND
+#0  a=0; b=0; cin=0; bnegate=0; op[2]=0; op[1]=0; op[0]=0; 
+#10 a=1; b=0; cin=0; bnegate=0; op[2]=0; op[1]=0; op[0]=0;
+#10 a=1; b=1; cin=0; bnegate=0; op[2]=0; op[1]=0; op[0]=0;
+//OR
+#10 a=0; b=0; cin=0; bnegate=0; op[2]=0; op[1]=1; op[0]=1;
+#10 a=1; b=0; cin=0; bnegate=0; op[2]=0; op[1]=1; op[0]=1;
+#10 a=1; b=1; cin=0; bnegate=0; op[2]=0; op[1]=1; op[0]=1;
+
+//ADD
+#10 a=4'h000f; b=4'h000e; cin=0; bnegate=0; op[2]=1; op[1]=0; op[0]=0;
+#10 a=4'h0101; b=4'h1010; cin=0; bnegate=0; op[2]=1; op[1]=0; op[0]=0;
+
+//SUB
+#10 a=16'h000f; b=16'h000e;  cin=1; bnegate=1; op[2]=1; op[1]=0; op[0]=0;
+#10 a=16'd1001; b=16'd0111; cin=1; bnegate=1; op[2]=1; op[1]=0; op[0]=0;
+
+// XOR
+#10 a=4'h000f; b=4'h000e; cin=0; bnegate=0; op[2]=0; op[1]=1; op[0]=1;
+#10 a=4'h0010; b=4'h1000; cin=0; bnegate=0; op[2]=0; op[1]=1; op[0]=1;
+
+// SLL
+#10 a=4'h000f; b=4'h000e; cin=0; bnegate=0; op[2]=0; op[1]=0; op[0]=1;
+#10 a=4'h0010; b=4'h0100; cin=0; bnegate=0; op[2]=0; op[1]=0; op[0]=1;
+
+// SRL
+#10 a=4'h000f; b=4'h000e; cin=0; bnegate=0; op[2]=1; op[1]=1; op[0]=0;
+#10 a=4'h0010; b=4'h0010; cin=0; bnegate=0; op[2]=1; op[1]=1; op[0]=0;
+
+// MULT
+#10 a=4'h000f; b=4'h000e; cin=0; bnegate=0; op[2]=1; op[1]=1; op[0]=1;
+#10 a=4'h0010; b=4'h1000; cin=0; bnegate=0; op[2]=1; op[1]=1; op[0]=1;
+
+#10 $stop;
+end
+
+alu_16bit a16(a, b, cin, bnegate, op, result, cout);
+endmodule
+
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05/28/2020 11:56:07 AM
+// Design Name: 
+// Module Name: CPU_tb
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module CPU_tb(
+  );
+  reg clk;
+  
+ 
+  initial
+  begin 
+  #0 clk=0;
+  #5 clk=1;
+  #5 clk=0;
+  #5 clk=1;
+  #5 clk=1;
+  #5 clk=0;
+  #5 clk=1;
+  #5 clk=1;
+ 
+  end 
+  
+  CPU CPU_tb (clk);
+endmodule
